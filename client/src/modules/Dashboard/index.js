@@ -36,7 +36,7 @@ const Dashboard = () => {
   ];
   return (
     <div className="w-screen flex">
-      <div className="w-[22.5%] h-screen bg-secondary">
+      <div className="w-[22.5%] h-screen bg-light">
         <div className="flex items-center my-6 mx-14">
           <div>
             <img src={Avatar} width={60} height={60} />
@@ -71,7 +71,7 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="w-[55%] h-screen bg-white flex flex-col items-center">
-        <div className="w-[65%] bg-secondary h-[60px] my-5 rounded-full flex items-center px-11">
+        <div className="w-[65%] bg-light h-[60px] my-5 rounded-full flex items-center px-11">
           <div className="cursor-pointer">
             <img src={Avatar} width={45} height={45} />
           </div>
@@ -85,21 +85,21 @@ const Dashboard = () => {
         </div>
         <div className="h-[80%] w-full overflow-y-scroll shadow-sm ">
             <div className="px-6 pb-6" >
-                <div className="max-w-[40%] bg-secondary rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
+                <div className="max-w-[40%] bg-light rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
                 <div className="max-w-[40%] bg-primary rounded-b-xl rounded-tl-xl ml-auto p-2.5 text-white mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
-                <div className="max-w-[40%] bg-secondary rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
+                <div className="max-w-[40%] bg-light rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
                 <div className="max-w-[40%] bg-primary rounded-b-xl rounded-tl-xl ml-auto p-2.5 text-white mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
-                <div className="max-w-[40%] bg-secondary rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
+                <div className="max-w-[40%] bg-light rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
                 <div className="max-w-[40%] bg-primary rounded-b-xl rounded-tl-xl ml-auto p-2.5 text-white mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
-                <div className="max-w-[40%] bg-secondary rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
+                <div className="max-w-[40%] bg-light rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
                 <div className="max-w-[40%] bg-primary rounded-b-xl rounded-tl-xl ml-auto p-2.5 text-white mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
-                <div className="max-w-[40%] bg-secondary rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
+                <div className="max-w-[40%] bg-light rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
                 <div className="max-w-[40%] bg-primary rounded-b-xl rounded-tl-xl ml-auto p-2.5 text-white mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
-                <div className="max-w-[40%] bg-secondary rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
+                <div className="max-w-[40%] bg-light rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
                 <div className="max-w-[40%] bg-primary rounded-b-xl rounded-tl-xl ml-auto p-2.5 text-white mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
-                <div className="max-w-[40%] bg-secondary rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
+                <div className="max-w-[40%] bg-light rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
                 <div className="max-w-[40%] bg-primary rounded-b-xl rounded-tl-xl ml-auto p-2.5 text-white mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
-                <div className="max-w-[40%] bg-secondary rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
+                <div className="max-w-[40%] bg-light rounded-b-xl rounded-tr-xl p-2.5 mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
                 <div className="max-w-[40%] bg-primary rounded-b-xl rounded-tl-xl ml-auto p-2.5 text-white mb-5">lorem1 ipsum lijebrg ernub bew weiuhf wen ausd we ujbfew dfsf unbb</div>
             </div>
         </div>

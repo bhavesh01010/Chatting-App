@@ -2,6 +2,8 @@ import { useState } from "react";
 import React from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
+import { useNavigate } from "react-router-dom"
+
 
 const Form = ({ isSignInPage = 0 }) => {
   const [data, setData] = useState({
@@ -11,7 +13,9 @@ const Form = ({ isSignInPage = 0 }) => {
     email: "",
     password: "",
   });
+  const navigate = useNavigate()
   return (
+    <div className="bg-light h-screen flex justify-center items-center">
     <div className="bg-white w-[600px] h-[680px] shadow-lg rounded-lg flex flex-col justify-center items-center">
       <div className="text-4xl font-extrabold">
         Welcome {isSignInPage && "back!"}
@@ -59,11 +63,13 @@ const Form = ({ isSignInPage = 0 }) => {
         />
       </form>
       <div>
-        {isSignInPage ? "Create new account" : "Already have an account?"}
-        <span className="text-primary cursor-pointer underline">
+        {isSignInPage ? "Create new account " : "Already have an account? "}
+        <span className="text-primary cursor-pointer underline"
+        onClick={()=> navigate(`/user/${isSignInPage ? "sign_up" : "sign_in"}`) }>
           {isSignInPage ? "Sign up" : "Sign in"}
         </span>
       </div>
+    </div>
     </div>
   );
 };
