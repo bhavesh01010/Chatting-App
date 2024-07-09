@@ -8,6 +8,8 @@ require("./db/connection.js");
 
 //Import Files
 const Users = require("./models/Users.js");
+const Conversations = require('./models/Conversations.js');
+const Messages = require('./models/Messages.js')
 
 const app = express();
 
@@ -34,7 +36,6 @@ app.post("/api/register", async (req, res, next) => {
         const newUser = new Users({ fullName: fullName, email: email });
         bcryptjs.hash(password, 10, (err, newHashedPassword) => {
           newUser.set({ password: newHashedPassword });
-          // console.log(newUser)
           newUser.save();
           res.status(200).send("user has been registered");
           next();
@@ -43,7 +44,9 @@ app.post("/api/register", async (req, res, next) => {
     } else {
       req.status(404).status("please enter all fields");
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log('error: ', error)
+  }
 });
 
 //signin api
@@ -78,6 +81,34 @@ app.post('/api/signin', async (req,res,next)=>{
         }
     }else{
         res.status(404).send('please enter all fields')
+    }
+})
+
+//conersation creation api
+app.post('/api/conversation', async (req, res)=>{
+    try{
+        const { senderId, receiverId } = req.body
+        const newConversation = new Conversations({ members: [ senderId, receiverId ]})
+        await newConversation.save()
+        res.status(200).send('conversation has been established')
+    }catch(error){
+        console.log('error: ',error)
+    }
+})
+
+//opening a conversation api
+app.get('/api/conversation/:userId', async (req,res)=>{
+    try{
+        const userId = req.params.userId
+        const conversationMembers = await Conversations.find({members : {$in: [userId]}})
+        const userConversationData = Promise.all(conversationMembers.map(async (user)=>{
+          const receiverId = await user.members.find((member)=>member!==userId)
+          const receiver = await Users.findById(receiverId)
+          return { user: {fullName: receiver.fullName, email: receiver.email}, conversationId: user._id}
+        }))
+        res.status(200).json(await userConversationData)
+    }catch(error) {
+        console.log('error: ', error)
     }
 })
 
