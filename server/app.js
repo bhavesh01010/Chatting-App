@@ -136,10 +136,21 @@ app.get("/api/conversation/:userId", async (req, res) => {
   }
 });
 
-//saving messages to Db
+//saving messages to Db if conversation not created, will create conversation and then save message
 app.post("/api/message", async (req, res) => {
   try {
-    const { conversationId, senderId, message } = req.body;
+    const { conversationId, senderId, receiverId, message } = req.body;
+    if(!senderId || !message || !receiverId){
+      res.status(404).send('provide senderId and message')
+    }else if(!conversationId){
+      const newConversation = new Conversations({
+        members: [senderId, receiverId],
+      });
+      await newConversation.save()
+      const newMessage = await new Messages({ conversationId, senderId, message })
+      await newMessage.save()
+      res.status(200).send('conversation created and messaeg saved')
+    }
     const newMessage = new Messages({ conversationId, senderId, message });
     await newMessage.save();
     res.status(200).send("Message has been saved");
@@ -148,10 +159,13 @@ app.post("/api/message", async (req, res) => {
   }
 });
 
-//viewing messages from database
+//viewing messages from database. If no conversation has been created it will use params as 'new' and send empty array
 app.get("/api/message/:conversationId", async (req, res) => {
   try {
     const conversationId = req.params.conversationId;
+    if(conversationId === 'new'){
+      res.status(200).json([])
+    }
     const messages = await Messages.find({ conversationId });
     const userConversationData = Promise.all(
       messages.map(async (message) => {
