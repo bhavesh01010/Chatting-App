@@ -7,10 +7,10 @@ const messageSchema = mongoose.Schema({
     senderId: {
         type: String,
     },
-    messages: {
+    message: {
         type: String,
-    },
-});
+    }
+})
 
 const Messages = mongoose.model('Message', messageSchema)
 

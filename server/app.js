@@ -1,15 +1,15 @@
 const express = require("express");
 require("dotenv").config();
 const bcryptjs = require("bcryptjs");
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 
 //Connect MongoDb
 require("./db/connection.js");
 
 //Import Files
 const Users = require("./models/Users.js");
-const Conversations = require('./models/Conversations.js');
-const Messages = require('./models/Messages.js')
+const Conversations = require("./models/Conversations.js");
+const Messages = require("./models/Messages.js");
 
 const app = express();
 
@@ -45,72 +45,130 @@ app.post("/api/register", async (req, res, next) => {
       req.status(404).status("please enter all fields");
     }
   } catch (error) {
-    console.log('error: ', error)
+    console.log("Error: ", error);
   }
 });
 
 //signin api
-app.post('/api/signin', async (req,res,next)=>{
-    const { email, password } = req.body
-    if(email && password){
-        const user = await Users.findOne({ email })
-        if(user){
-            const validateUser = bcryptjs.compare(password, user.password)
-            if(!validateUser){
-                //send wrong email or password but for testing here it is written specifically which one is wrong
-                res.status(400).send('wrong password')
-            }else{
-                const payload = {
-                    userId: user._id,
-                    email: user.email
-                }
-                const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secret'
-                
-                jwt.sign(payload, JWT_SECRET_KEY, {expiresIn: 84600}, async (err,token)=>{
-                    await Users.updateOne({ _id: user._id }, {
-                        $set: { token }
-                    })
-                    user.save()
-                    next()
-                })
-                res.status(200).json({user : {fullName: user.fullName, email: user.email}, token: user.token})
-            }
-        }else{
-            //send wrong email or password but for testing here it is written specifically which one is wrong
-            res.status(400).send('wrong email')
-        }
-    }else{
-        res.status(404).send('please enter all fields')
+app.post("/api/signin", async (req, res, next) => {
+  const { email, password } = req.body;
+  if (email && password) {
+    const user = await Users.findOne({ email });
+    if (user) {
+      const validateUser = bcryptjs.compare(password, user.password);
+      if (!validateUser) {
+        //send wrong email or password but for testing here it is written specifically which one is wrong
+        res.status(400).send("wrong password");
+      } else {
+        const payload = {
+          userId: user._id,
+          email: user.email,
+        };
+        const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "secret";
+
+        jwt.sign(
+          payload,
+          JWT_SECRET_KEY,
+          { expiresIn: 84600 },
+          async (err, token) => {
+            await Users.updateOne(
+              { _id: user._id },
+              {
+                $set: { token },
+              }
+            );
+            user.save();
+            next();
+          }
+        );
+        res
+          .status(200)
+          .json({
+            user: { fullName: user.fullName, email: user.email },
+            token: user.token,
+          });
+      }
+    } else {
+      //send wrong email or password but for testing here it is written specifically which one is wrong
+      res.status(400).send("wrong email");
     }
-})
+  } else {
+    res.status(404).send("please enter all fields");
+  }
+});
 
 //conersation creation api
-app.post('/api/conversation', async (req, res)=>{
-    try{
-        const { senderId, receiverId } = req.body
-        const newConversation = new Conversations({ members: [ senderId, receiverId ]})
-        await newConversation.save()
-        res.status(200).send('conversation has been established')
-    }catch(error){
-        console.log('error: ',error)
-    }
-})
+app.post("/api/conversation", async (req, res) => {
+  try {
+    const { senderId, receiverId } = req.body;
+    const newConversation = new Conversations({
+      members: [senderId, receiverId],
+    });
+    await newConversation.save();
+    res.status(200).send("conversation has been established");
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+});
 
 //opening a conversation api
-app.get('/api/conversation/:userId', async (req,res)=>{
-    try{
-        const userId = req.params.userId
-        const conversationMembers = await Conversations.find({members : {$in: [userId]}})
-        const userConversationData = Promise.all(conversationMembers.map(async (user)=>{
-          const receiverId = await user.members.find((member)=>member!==userId)
-          const receiver = await Users.findById(receiverId)
-          return { user: {fullName: receiver.fullName, email: receiver.email}, conversationId: user._id}
-        }))
-        res.status(200).json(await userConversationData)
-    }catch(error) {
-        console.log('error: ', error)
-    }
-})
+app.get("/api/conversation/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const conversationMembers = await Conversations.find({
+      members: { $in: [userId] },
+    });
+    const userConversationData = Promise.all(
+      conversationMembers.map(async (user) => {
+        const receiverId = await user.members.find(
+          (member) => member !== userId
+        );
+        const receiver = await Users.findById(receiverId);
+        return {
+          user: { fullName: receiver.fullName, email: receiver.email },
+          conversationId: user._id,
+        };
+      })
+    );
+    res.status(200).json(await userConversationData);
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+});
+
+//saving messages to Db
+app.post("/api/message", async (req, res) => {
+  try {
+    const { conversationId, senderId, message } = req.body;
+    const newMessage = new Messages({ conversationId, senderId, message });
+    await newMessage.save();
+    res.status(200).send("Message has been saved");
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+});
+
+//viewing messages from database
+app.get("/api/message/:conversationId", async (req, res) => {
+  try {
+    const conversationId = req.params.conversationId;
+    const messages = await Messages.find({ conversationId });
+    const userConversationData = Promise.all(
+      messages.map(async (message) => {
+        const sender = await Users.findById(message.senderId);
+        return {
+          user: { fullName: sender.fullName, email: sender.email },
+          message: message.message,
+        }
+      })
+    );
+    res
+      .status(200)
+      .json(await userConversationData);
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+});
 
 app.listen(port, () => {
   console.log("server is running on port " + port);
