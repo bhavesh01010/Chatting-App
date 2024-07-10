@@ -39,7 +39,7 @@ app.post("/api/register", async (req, res, next) => {
         bcryptjs.hash(password, 10, (err, newHashedPassword) => {
           newUser.set({ password: newHashedPassword });
           newUser.save();
-          res.status(200).send("user has been registered");
+          res.status(200).json({ success: "user has been registered" });
           next();
         });
       }
@@ -80,7 +80,7 @@ app.post("/api/signin", async (req, res, next) => {
           }
         );
         res.status(200).json({
-          user: { fullName: user.fullName, email: user.email },
+          user: { fullName: user.fullName, email: user.email, id: user._id },
           token: token,
         });
       }
@@ -101,7 +101,7 @@ app.post("/api/conversation", async (req, res) => {
       members: [senderId, receiverId],
     });
     await newConversation.save();
-    res.status(200).json({ error: "conversation has been established" });
+    res.status(200).json({ success: "conversation has been established" });
   } catch (error) {
     console.log("Error: ", error);
   }
@@ -120,6 +120,7 @@ app.get("/api/conversation/:userId", async (req, res) => {
           (member) => member !== userId
         );
         const receiver = await Users.findById(receiverId);
+        // console.log(receiver)
         return {
           user: { fullName: receiver.fullName, email: receiver.email },
           conversationId: user._id,
@@ -149,11 +150,11 @@ app.post("/api/message", async (req, res) => {
         message,
       });
       await newMessage.save();
-      res.status(200).json({ error: "conversation created and messaeg saved" });
+      res.status(200).json({ success: "conversation created and messaeg saved" });
     }
     const newMessage = new Messages({ conversationId, senderId, message });
     await newMessage.save();
-    res.status(200).json({ error: "Message has been saved" });
+    res.status(200).json({ success: "Message has been saved" });
   } catch (error) {
     console.log("Error: ", error);
   }

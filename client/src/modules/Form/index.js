@@ -29,12 +29,13 @@ const Form = ({ isSignInPage = 0 }) => {
     console.log('data: ', resData)
     if(resData.token){
       localStorage.setItem('user:token', resData.token)
-      localStorage.setItem('user:detail', resData.user)
+      localStorage.setItem('user:detail', JSON.stringify(resData.user))
       navigate('/')
     }else{
       alert("Server error")
     }
   }
+  
   return (
     <div className="bg-light h-screen flex justify-center items-center">
       <div className="bg-white w-[600px] h-[680px] shadow-lg rounded-lg flex flex-col justify-center items-center">
