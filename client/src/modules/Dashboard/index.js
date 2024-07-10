@@ -42,7 +42,7 @@ const Dashboard = () => {
             <img src={Avatar} width={60} height={60} />
           </div>
           <div className="ml-7">
-            <h3 className="text-2xl">Tutorials Dev</h3>
+            <h3 className="text-2xl">Bhavesh</h3>
             <p className="text-lg font-light">My Account</p>
           </div>
         </div>
