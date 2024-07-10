@@ -170,6 +170,22 @@ app.get("/api/message/:conversationId", async (req, res) => {
   }
 });
 
+//list of all users
+app.get('/api/users', async (req,res)=>{
+  try{
+    const users = await Users.find()
+    const userData = Promise.all(users.map((user)=>{
+      return {
+        user: { fullName: user.fullName, email: user.email },
+        userId: user._id
+      }
+    }))
+    res.status(200).json(await userData)
+  }catch(error){
+    console.log('Error: ',error)
+  }
+})
+
 app.listen(port, () => {
   console.log("server is running on port " + port);
 });
