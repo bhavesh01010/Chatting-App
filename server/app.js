@@ -165,22 +165,30 @@ app.post("/api/message", async (req, res) => {
 //viewing messages from database. If no conversation has been created it will use params as 'new' and send empty array
 app.get("/api/message/:conversationId", async (req, res) => {
   try {
+    const checkMessages = async(conversationId) =>{
+      const messages = await Messages.find({ conversationId });
+      const userConversationData = Promise.all(
+        messages.map(async (message) => {
+          const sender = await Users.findById(message.senderId);
+          return {
+            user: { id:sender._id, fullName: sender.fullName, email: sender.email },
+            message: message.message
+          };
+        })
+      );
+      res.status(200).json(await userConversationData);
+    }
     const conversationId = req.params.conversationId;
     if (conversationId === "new") {
-      res.status(200).json([]);
+      const checkConversation = await Conversations.find({members: { $in : [req.query.receiverId, req.query.senderId]}})
+      if(checkConversation.length>0){
+        checkMessages(checkConversation[0]._id)
+      }else{
+        res.status(200).json([]);
+      }
+    }else{
+      checkMessages(conversationId)
     }
-    const messages = await Messages.find({ conversationId });
-    const userConversationData = Promise.all(
-      messages.map(async (message) => {
-        const sender = await Users.findById(message.senderId);
-        console.log("SENDER ------->", sender)
-        return {
-          user: { id:sender._id, fullName: sender.fullName, email: sender.email },
-          message: message.message
-        };
-      })
-    );
-    res.status(200).json(await userConversationData);
   } catch (error) {
     console.log("Error: ", error);
   }

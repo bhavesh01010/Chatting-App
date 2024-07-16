@@ -80,7 +80,7 @@ const Dashboard = () => {
   const fetchMessages = async (conversationId, user) => {
     // console.log(user)
     const res = await fetch(
-      `http://localhost:8181/api/message/${conversationId}`,
+      `http://localhost:8181/api/message/${conversationId}?senderId=${user?.id}&&receiverId=${messages?.receiver?.id}`,
       {
         method: "GET",
         headers: {
