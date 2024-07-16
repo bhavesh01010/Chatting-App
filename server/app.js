@@ -120,9 +120,9 @@ app.get("/api/conversation/:userId", async (req, res) => {
           (member) => member !== userId
         );
         const receiver = await Users.findById(receiverId);
-        // console.log(receiver)
+        console.log(receiver)
         return {
-          user: { fullName: receiver.fullName, email: receiver.email },
+          user: { receiverId: receiver._id, fullName: receiver.fullName, email: receiver.email },
           conversationId: user._id,
         };
       })
@@ -136,21 +136,23 @@ app.get("/api/conversation/:userId", async (req, res) => {
 //saving messages to Db if conversation not created, will create conversation and then save message
 app.post("/api/message", async (req, res) => {
   try {
-    const { conversationId, senderId, receiverId, message } = req.body;
+    const { conversationId, senderId, receiverId='', message } = req.body;
     if (!senderId || !message || !receiverId) {
-      res.status(404).json({ error: "provide senderId and message" });
-    } else if (!conversationId) {
-      const newConversation = new Conversations({
-        members: [senderId, receiverId],
+      res.status(404).json({ error: "provide senderId, message and receiverId" });
+    } else if (conversationId === 'new') {
+      console.log('conversation is new')
+      const newConversation = await new Conversations({
+        members: [senderId, receiverId]
       });
       await newConversation.save();
+      console.log(newConversation._id)
       const newMessage = await new Messages({
-        conversationId,
+        conversationId: newConversation._id,
         senderId,
-        message,
+        message
       });
       await newMessage.save();
-      res.status(200).json({ success: "conversation created and messaeg saved" });
+      res.status(200).json({ success: "conversation created and message saved" });
     }
     const newMessage = new Messages({ conversationId, senderId, message });
     await newMessage.save();
@@ -171,9 +173,10 @@ app.get("/api/message/:conversationId", async (req, res) => {
     const userConversationData = Promise.all(
       messages.map(async (message) => {
         const sender = await Users.findById(message.senderId);
+        console.log("SENDER ------->", sender)
         return {
-          user: { fullName: sender.fullName, email: sender.email },
-          message: message.message,
+          user: { id:sender._id, fullName: sender.fullName, email: sender.email },
+          message: message.message
         };
       })
     );
@@ -184,14 +187,14 @@ app.get("/api/message/:conversationId", async (req, res) => {
 });
 
 //list of all users
-app.get("/api/users", async (req, res) => {
+app.get("/api/users/:userId", async (req, res) => {
   try {
-    const users = await Users.find();
+    const userId = req.params.userId
+    const users = await Users.find({_id: {$ne: userId}});
     const userData = Promise.all(
       users.map((user) => {
         return {
-          user: { fullName: user.fullName, email: user.email },
-          userId: user._id,
+          user: { id:user._id, fullName: user.fullName, email: user.email }
         };
       })
     );

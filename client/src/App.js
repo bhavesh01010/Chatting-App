@@ -5,7 +5,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children, auth = false }) => {
   const isLoggedIn = localStorage.getItem("user:token") !== null
-  console.log(isLoggedIn)
   if (!isLoggedIn && auth) {
     console.log("Navigated")
     return <Navigate to={"/user/sign_in"} />;

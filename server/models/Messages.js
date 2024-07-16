@@ -9,7 +9,7 @@ const messageSchema = mongoose.Schema({
     },
     message: {
         type: String,
-    }
+    },
 })
 
 const Messages = mongoose.model('Message', messageSchema)
