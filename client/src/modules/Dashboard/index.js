@@ -5,35 +5,9 @@ import Input from "../../components/Input/index";
 import Send from "../../assets/send.svg";
 import Plus from "../../assets/plus.svg";
 import { useState } from "react";
+import { io } from 'socket.io-client'
 
 const Dashboard = () => {
-  const contacts = [
-    {
-      name: "John",
-      status: "Available",
-      img: Avatar,
-    },
-    {
-      name: "John",
-      status: "Available",
-      img: Avatar,
-    },
-    {
-      name: "John",
-      status: "Available",
-      img: Avatar,
-    },
-    {
-      name: "John",
-      status: "Available",
-      img: Avatar,
-    },
-    {
-      name: "John",
-      status: "Available",
-      img: Avatar,
-    },
-  ];
 
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user:detail"))
@@ -43,7 +17,24 @@ const Dashboard = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState([]);
   const [use, setUse] = useState([]);
-  // console.log("users : ",users)
+  const [socket,setSocket] = useState(null)
+
+  useEffect(()=>{
+    setSocket(io('http://localhost:8000'))
+  },[])
+
+  useEffect(()=>{
+    socket?.emit('addUser', user?.id)
+    socket?.on('getUsers', users =>{
+      console.log('Active users: ', users)
+    })
+    socket?.on('getMessage', data => {
+      setMessages(pre=> ({
+        ...pre,
+        message: [...pre.message, {user: data.user, message: data.message}]
+      }))
+    })
+  },[socket])
   
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user:detail"));
@@ -89,11 +80,19 @@ const Dashboard = () => {
       }
     );
     const resData = await res.json();
-    console.log(resData)
+    // console.log(resData)
     setMessages({ message: resData, receiver: user, conversationId });
   };
 
   const sendMessage = async () => {
+    setMessage("");
+    socket?.emit('sendMessage', {
+      conversationId: messages?.conversationId,
+      senderId: user?.id,
+      message,
+      receiverId: messages?.receiver?.receiverId
+    })
+    // console.log(messages)
     const res = await fetch(`http://localhost:8181/api/message`, {
       method: "POST",
       headers: {
@@ -103,13 +102,11 @@ const Dashboard = () => {
         conversationId: messages?.conversationId,
         senderId: user?.id,
         message,
-        receiverId: messages?.receiver?.id,
+        receiverId: messages?.receiver?.receiverId,
       }),
     });
     const resData = await res.json();
-    console.log(messages)
     // console.log("resData : ", resData);
-    setMessage("");
   };
 
   // const content = () => {
